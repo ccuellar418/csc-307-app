@@ -35,6 +35,12 @@ const findUserByName = (name) => {
     (user) => user["name"] === name
   );
 };
+
+const findUserByJob = (job) => {
+  return users["users_list"].filter(
+    (user) => user["job"] === job
+  );
+};
   
 const findUserById = (id) =>
   users["users_list"].find((user) => user["id"] === id);
@@ -43,6 +49,15 @@ const addUser = (user) => {
   users["users_list"].push(user);
   return user;
 };
+
+const delUser = (user) => {
+  const index = users["users_list"].indexOf(user);
+  if (index != -1) {
+    users["users_list"].splice(index, 1);
+  } 
+};
+
+
 
 const app = express();
 const port = 8000;
@@ -55,18 +70,25 @@ app.get("/", (req, res) => {
 
 app.get("/users", (req, res) => {
   const name = req.query.name;
+  const job = req.query.job;
+
   if (name != undefined) {
     let result = findUserByName(name);
     result = { users_list: result };
     res.send(result);
-  } else {
+  } 
+  else if (job != undefined) {
+    let result = findUserByJob(job);
+    result = { users_list: result };
+    res.send(result);
+  }
+  else {
     res.send(users);
   }
 });
 
 app.get("/users/:id", (req, res) => {
   const id = req.params["id"]; //or req.params.id
-  // const id = req.params.id;
   let result = findUserById(id);
   if (result === undefined) {
     res.status(404).send("Resource not found.");
@@ -79,6 +101,17 @@ app.post("/users", (req, res) => {
   const userToAdd = req.body;
   addUser(userToAdd);
   res.send();
+});
+
+app.delete("/users/:id", (req, res) => {
+  const id = req.params["id"];
+  let user = findUserById(id);
+  if (user === undefined) {
+    res.status(404).send("Resource not found.");
+  } else {
+    delUser(user);
+    res.status(204).send();
+  }
 });
 
 app.listen(port, () => {
