@@ -5,16 +5,9 @@ import Form from "./Form";
 function MyApp() {
     const [characters, setCharacters] = useState([]);
 
-    // function removeOneCharacter(index) {
-    //     const updated = characters.filter((character, i) => {
-    //         return i !== index;
-    //     });
-    //     setCharacters(updated);
-    // }
-
     function removeOneCharacter(index) {
 
-      fetch(`http://localhost:8000/users/${characters[index].id}`, {
+      fetch(`http://localhost:8000/users/${characters[index]._id}`, {
         method: 'DELETE'
       })
 
@@ -31,9 +24,6 @@ function MyApp() {
       .catch((err) => console.error("Error deleting user:", err));
     }
 
-    // function updateList(person) {
-    //     setCharacters([...characters, person]);
-    //   }
     function updateList(person) {
       postUser(person)
         .then((res) => res.json())
